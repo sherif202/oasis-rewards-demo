@@ -18,7 +18,7 @@ export interface OrderItem {
   pid: string;
   qty: number;
   price: number;
-  missing?: "pending" | "approved" | "review";
+  missing?: "pending" | "approved" | "review" | undefined;
 }
 export interface Order {
   id: string;
@@ -35,7 +35,7 @@ export interface Order {
   deliveredAt?: number;
   slot: string;
   payment: Payment;
-  makeGoodCreditId?: string;
+  makeGoodCreditId?: string | undefined;
   fullyRefunded?: boolean;
   refunded?: number;
 }
@@ -43,7 +43,7 @@ export interface Notif {
   id: string;
   at: number;
   key: string;
-  vars?: Record<string, string | number>;
+  vars?: Record<string, string | number> | undefined;
   read?: boolean;
 }
 export interface Customer {
@@ -442,6 +442,7 @@ export const actions = {
     setTimeout(() => {
       const s = state;
       const item = s.customers.find((x) => x.id === cid)!.orders.find((o) => o.id === oid)!.items[idx];
+      if (!item) return;
       const refund = item.price * item.qty;
       const giveCredit = s.settings.perks.missingItem && budgetLeft(s) >= R.MISSING_CREDIT_AED;
       const t = Date.now();
